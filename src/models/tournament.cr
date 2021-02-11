@@ -7,8 +7,8 @@ class Tournament < Jennifer::Model::Base
     finished_at: Time?, # get rid of this? can be calculated
     description: String?,
 
-    created_at: { type: Time, default: Time.now },
-    updated_at: { type: Time, default: Time.now }
+    created_at: { type: Time, default: Time.local },
+    updated_at: { type: Time, default: Time.local }
   )
 
   validates_presence :league_id

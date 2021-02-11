@@ -52,7 +52,7 @@ class Game::Confirm
   private def update_game
     game.rating_delta = rating_delta
     game.confirmed_by_id = confirming_player.id
-    game.confirmed_at = Time.now
+    game.confirmed_at = Time.local
   end
 
   private def update_ratings

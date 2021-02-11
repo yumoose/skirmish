@@ -1,31 +1,13 @@
 require "./spec_helper"
 
-class SessionControllerSpec < GarnetSpec::Controller::Test
-  getter handler : Amber::Pipe::Pipeline
+include GarnetSpec::RequestHelper
 
-  def initialize
-    @handler = Amber::Pipe::Pipeline.new
-
-    @handler.build :web do
-      plug Amber::Pipe::Error.new
-      plug Amber::Pipe::Session.new
-      plug Amber::Pipe::Flash.new
-      plug FakeId.new
-      plug Authenticate.new
-    end
-
-    @handler.prepare_pipelines
-  end
-end
-
-describe SessionControllerSpec do
-  subject = SessionControllerSpec.new
-
+describe SessionController do
   describe "#show" do
     context "when a user is already signed in" do
       it "redirects to the landing page" do
         player = create_player_with_mock_user
-        response = subject.get "/signin", headers: authenticated_headers_for(player)
+        response = get "/signin", headers: authenticated_headers_for(player)
 
         response.status_code.should eq(302)
         response.headers["Location"].should eq "/leagues"
@@ -34,13 +16,13 @@ describe SessionControllerSpec do
 
     context "when the user is not signed in" do
       it "successfully renders the page" do
-        response = subject.get "/signin"
+        response = get "/signin"
 
         response.status_code.should eq(200)
       end
 
       it "contains a form to sign in" do
-        response = subject.get "/signin"
+        response = get "/signin"
 
         response.body.should contain("Email")
         response.body.should contain("Password")
@@ -48,7 +30,7 @@ describe SessionControllerSpec do
       end
 
       it "contains a link for new users to create an account" do
-        response = subject.get "/signin"
+        response = get "/signin"
 
         response.body.should contain("Don't have an account yet?")
         response.body.should contain("/signup")
@@ -63,7 +45,7 @@ describe SessionControllerSpec do
         user = create_player_with_mock_user(password: password, verified: false).user!
 
         login_params = { email: user.email, password: password }.to_h
-        response = subject.post "/session", body: params_from_hash(login_params)
+        response = post "/session", body: params_from_hash(login_params)
 
         response.status_code.should eq(302)
         response.headers["Location"].should eq "/verification?email=#{user.email}"
@@ -73,7 +55,7 @@ describe SessionControllerSpec do
     context "when a user for the email doesn't exist" do
       it "renders the sign in form" do
         login_params = { email: "non_existent_user", password: "password" }.to_h
-        response = subject.post "/session", body: params_from_hash(login_params)
+        response = post "/session", body: params_from_hash(login_params)
 
         response.status_code.should eq(200)
         response.body.should contain "Invalid email or password"
@@ -86,7 +68,7 @@ describe SessionControllerSpec do
         user.activate!
 
         login_params = { email: user.email, password: "321cba" }.to_h
-        response = subject.post "/session", body: params_from_hash(login_params)
+        response = post "/session", body: params_from_hash(login_params)
 
         response.status_code.should eq(200)
         response.body.should contain "Invalid email or password"
@@ -100,7 +82,7 @@ describe SessionControllerSpec do
         user.activate!
 
         login_params = { email: user.email, password: password }.to_h
-        response = subject.post "/session", body: params_from_hash(login_params)
+        response = post "/session", body: params_from_hash(login_params)
 
         response.status_code.should eq(302)
         response.headers["Location"].should eq "/leagues"

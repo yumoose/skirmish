@@ -12,11 +12,11 @@ class Notification < Jennifer::Model::Base
     content: String,
     type: String?,
 
-    sent_at: { type: Time, default: Time.now },
+    sent_at: { type: Time, default: Time.local },
     read_at: Time?,
 
-    created_at: { type: Time, default: Time.now },
-    updated_at: { type: Time, default: Time.now }
+    created_at: { type: Time, default: Time.local },
+    updated_at: { type: Time, default: Time.local }
   )
 
   scope :read { where { _read_at != nil } }
@@ -43,7 +43,7 @@ class Notification < Jennifer::Model::Base
   def read!
     return if read?
 
-    self.read_at = Time.now
+    self.read_at = Time.local
     save!
   end
 

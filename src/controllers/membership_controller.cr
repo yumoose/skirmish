@@ -23,7 +23,7 @@ class MembershipController < ApplicationController
     membership = Membership.build(
       league_id: league.id,
       player_id: player.id,
-      joined_at: Time.now
+      joined_at: Time.local
     )
 
     if membership.valid? && membership.save
@@ -41,7 +41,7 @@ class MembershipController < ApplicationController
 
     if league
       if membership = player.memberships_query.where { _league_id == league.id }.to_a.first
-        if membership.update(left_at: leaving? ? Time.now : nil)
+        if membership.update(left_at: leaving? ? Time.local : nil)
           if leaving?
             flash["success"] = "Left #{league.name}"
           else
@@ -94,7 +94,7 @@ class MembershipController < ApplicationController
     if league
       if current_player.not_nil!.admin_of?(league)
         if membership = league.memberships_query.where { _league_id == league.id && _id == params[:id] }.to_a.first
-          membership.update(left_at: Time.now)
+          membership.update(left_at: Time.local)
           player = membership.player!
           flash["success"] = "#{player.tag} removed from #{league.name}"
           redirect_to "/leagues/#{league.id}/players"

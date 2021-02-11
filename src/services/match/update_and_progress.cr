@@ -26,7 +26,7 @@ class Match::UpdateAndProgress
 
     tournament = match.tournament.not_nil!
     if tournament.finished?
-      tournament.update!(finished_at: Time.now)
+      tournament.update!(finished_at: Time.local)
     end
   end
 

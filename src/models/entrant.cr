@@ -6,8 +6,8 @@ class Entrant < Jennifer::Model::Base
     tournament_id: Int64,
     player_id: Int64,
 
-    created_at: { type: Time, default: Time.now },
-    updated_at: { type: Time, default: Time.now }
+    created_at: { type: Time, default: Time.local },
+    updated_at: { type: Time, default: Time.local }
   )
 
   validates_presence :tournament_id

@@ -6,7 +6,7 @@ class RequestController < ApplicationController
   # request an invite to the league
   def create
     if league = League.find(params[:league_id])
-      Jennifer::Adapter.adapter.transaction do
+      Jennifer::Adapter.default_adapter.transaction do
         Invitation::Create.new(
           league: league,
           player: current_player.not_nil!
@@ -28,7 +28,7 @@ class RequestController < ApplicationController
   def update
     if invite = Invitation.find(params[:id])
       if current_player.not_nil!.admin_of?(invite.league!)
-        Jennifer::Adapter.adapter.transaction do
+        Jennifer::Adapter.default_adapter.transaction do
           Invitation::Approve.new(invitation: invite, approver: current_player.not_nil!).call
 
           flash["success"] = "Invite approved"
@@ -52,7 +52,7 @@ class RequestController < ApplicationController
       player = current_player.not_nil!
 
       if player.id == invite.player_id || player.admin_of?(invite.league!)
-        Jennifer::Adapter.adapter.transaction do
+        Jennifer::Adapter.default_adapter.transaction do
           invite.destroy
 
           flash["success"] = "Invite deleted"

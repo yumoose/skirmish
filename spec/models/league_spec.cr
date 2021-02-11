@@ -131,7 +131,7 @@ describe League do
       membership = Membership.create!(
         league_id: league.id,
         player_id: player.id,
-        joined_at: Time.now
+        joined_at: Time.local
       )
 
       it "has an active player" do
@@ -140,7 +140,7 @@ describe League do
 
       context "but the membership is expired" do
         membership.update!(
-          left_at: Time.now
+          left_at: Time.local
         )
 
         it "has no active players" do

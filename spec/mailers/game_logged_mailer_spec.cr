@@ -93,8 +93,8 @@ describe GameLoggedMailer do
         league = create_league
         player_one = create_player_with_mock_user
         player_two = create_player_with_mock_user
-        Membership.create!(player_id: player_one.id, league_id: league.id, joined_at: Time.now)
-        Membership.create!(player_id: player_two.id, league_id: league.id, joined_at: Time.now)
+        Membership.create!(player_id: player_one.id, league_id: league.id, joined_at: Time.local)
+        Membership.create!(player_id: player_two.id, league_id: league.id, joined_at: Time.local)
 
         game_logger = League::LogGame.new(league: league, winner: player_one, loser: player_two, logger: player_two)
         game_logger.call

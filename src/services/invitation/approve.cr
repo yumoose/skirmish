@@ -16,14 +16,14 @@ class Invitation::Approve
     assert_player_not_already_in_league!
     assert_approver_is_an_admin!
 
-    Jennifer::Adapter.adapter.transaction do
-      invitation.update!(approved_at: Time.now, approver_id: approver.id)
+    Jennifer::Adapter.default_adapter.transaction do
+      invitation.update!(approved_at: Time.local, approver_id: approver.id)
 
       GeneralNotification.create(
         player_id: player.id,
         title: "Invite request approved",
         content: "#{approver.tag} has approved your request to join #{league.name}",
-        sent_at: Time.now
+        sent_at: Time.local
       )
 
       Membership.create!(league_id: invitation.league_id, player_id: invitation.player_id)

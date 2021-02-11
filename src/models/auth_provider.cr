@@ -12,8 +12,8 @@ class AuthProvider < Jennifer::Model::Base
     token: String,
     provider: String,
 
-    created_at: { type: Time, default: Time.now },
-    updated_at: { type: Time, default: Time.now }
+    created_at: { type: Time, default: Time.local },
+    updated_at: { type: Time, default: Time.local }
   )
 
   scope :linked { where { _user_id != nil } }

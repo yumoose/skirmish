@@ -5,7 +5,7 @@ class League::LogGame::NotifyPlayer
   end
 
   def call!
-    Jennifer::Adapter.adapter.transaction do
+    Jennifer::Adapter.default_adapter.transaction do
       GameLoggedNotification.create!({
         type: "GameLoggedNotification",
         player_id: player.id.not_nil!,
@@ -13,7 +13,7 @@ class League::LogGame::NotifyPlayer
         content: content,
         source_type: game.class.to_s,
         source_id: game.id,
-        sent_at: Time.now
+        sent_at: Time.local
       })
 
       GameLoggedMailer.new(player, game).send if player.user!.receive_email_notifications?

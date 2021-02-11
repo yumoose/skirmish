@@ -11,7 +11,7 @@ class Tournament::Open
       raise OpenError.new("A tournament for this league is already in progress")
     end
 
-    Jennifer::Adapter.adapter.transaction do
+    Jennifer::Adapter.default_adapter.transaction do
       Tournament.create!(
         league_id: league.id,
         description: description

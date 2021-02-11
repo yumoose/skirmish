@@ -7,7 +7,7 @@ describe Tournament do
   describe "scopes" do
     describe ".unfinished" do
       finished_tournament = Tournament::Open.new(league).call.not_nil!
-      finished_tournament.update!(finished_at: Time.now)
+      finished_tournament.update!(finished_at: Time.local)
 
       new_tournament = Tournament::Open.new(league).call.not_nil!
 

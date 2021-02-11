@@ -217,7 +217,7 @@ class LeagueController < ApplicationController
   end
 
   def destroy
-    Jennifer::Adapter.adapter.transaction do
+    Jennifer::Adapter.default_adapter.transaction do
       if league = League.find params["id"]
         league.administrators_query.destroy
         league.memberships_query.destroy

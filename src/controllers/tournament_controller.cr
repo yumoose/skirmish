@@ -99,7 +99,7 @@ class TournamentController < ApplicationController
   def destroy
     if league = League.find(params[:league_id])
       if tournament = Tournament.find(params[:id])
-        Jennifer::Adapter.adapter.transaction do
+        Jennifer::Adapter.default_adapter.transaction do
           tournament.matches_query.destroy
           tournament.entrants_query.destroy
           tournament.destroy

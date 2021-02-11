@@ -32,7 +32,7 @@ class League::RetrievePlayerStats
         end
 
         # add a rating as at today
-        ratings[time_formatter.format(Time.now)] = participations.last?.try(&.rating) || league.start_rating
+        ratings[time_formatter.format(Time.local)] = participations.last?.try(&.rating) || league.start_rating
       end
 
       ratings

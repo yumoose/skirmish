@@ -91,7 +91,7 @@ describe Player do
       context "that has ended" do
         it "is false" do
           membership.update!(
-            left_at: Time.now
+            left_at: Time.local
           )
 
           player.member_of?(league).should be_false
@@ -121,7 +121,7 @@ describe Player do
     Membership.create!(
       player_id: player.id,
       league_id: left_league.id,
-      left_at: Time.now
+      left_at: Time.local
     )
 
     it "doesn't contain leagues the player has never joined" do

@@ -7,8 +7,8 @@ class PlayerContext < Jennifer::Model::Base
     player_id: Int64,
     league_id: Int64?,
 
-    created_at: { type: Time, default: Time.now },
-    updated_at: { type: Time, default: Time.now }
+    created_at: { type: Time, default: Time.local },
+    updated_at: { type: Time, default: Time.local }
   )
 
   validates_presence :player_id

@@ -11,8 +11,8 @@ class Invitation < Jennifer::Model::Base
     accepted_at: Time?,
     approved_at: Time?,
 
-    created_at: { type: Time, default: Time.now },
-    updated_at: { type: Time, default: Time.now }
+    created_at: { type: Time, default: Time.local },
+    updated_at: { type: Time, default: Time.local }
   )
 
   belongs_to :league, League

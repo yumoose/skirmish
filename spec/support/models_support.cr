@@ -5,7 +5,7 @@ def create_player_with_mock_user(tag : String? = nil, password : String? = nil, 
     email: "#{name}@test.com",
     receive_email_notifications: false,
     verification_code: Random::Secure.hex(8),
-    activated_at: verified ? Time.now : nil,
+    activated_at: verified ? Time.local : nil,
     password_digest: password ? Crypto::Bcrypt::Password.create(password, cost: 10).to_s : "$2y$10$2usLfyPcXzxmM4prDXg/J.qXlqbijcpVj5eHcYR0CBp7p38Ts8PEe"  # "password"
   )
 
@@ -30,9 +30,9 @@ def create_and_pit_players(league : League)
   player_two = create_player_with_mock_user
   player_three = create_player_with_mock_user
 
-  Membership.create!(player_id: player_one.id, league_id: league.id, joined_at: Time.now)
-  Membership.create!(player_id: player_two.id, league_id: league.id, joined_at: Time.now)
-  Membership.create!(player_id: player_three.id, league_id: league.id, joined_at: Time.now)
+  Membership.create!(player_id: player_one.id, league_id: league.id, joined_at: Time.local)
+  Membership.create!(player_id: player_two.id, league_id: league.id, joined_at: Time.local)
+  Membership.create!(player_id: player_three.id, league_id: league.id, joined_at: Time.local)
 
   game_logger = League::LogGame.new(league: league, winner: player_one, loser: player_three, logger: player_one)
   game_logger.call
@@ -51,12 +51,12 @@ def set_player_rating(league : League, player : Player, rating : Int32)
   if !player.participations_query.exists?
     # if the player hasn't participated, make a new player, log a game and then remove the player
     another_player = create_player_with_mock_user
-    membership = Membership.create!(player_id: another_player.id, league_id: league.id, joined_at: Time.now)
+    membership = Membership.create!(player_id: another_player.id, league_id: league.id, joined_at: Time.local)
     game_logger = League::LogGame.new(league: league, winner: player, loser: another_player, logger: player)
     game_logger.call
     game = game_logger.game
     Game::Confirm.new(game: game, confirming_player: another_player).call
-    membership.update!(left_at: Time.now)
+    membership.update!(left_at: Time.local)
   end
 
   participation = player.participations_query.order(created_at: :desc).first.not_nil!
@@ -64,7 +64,7 @@ def set_player_rating(league : League, player : Player, rating : Int32)
   participation.save
 end
 
-def create_notification(player : Player, type : String? = "GeneralNotification", source : Jennifer::Model::Base? = nil, title : String? = nil, content : String? = nil, sent_at : Time? = Time.now, read_at : Time? = nil)
+def create_notification(player : Player, type : String? = "GeneralNotification", source : Jennifer::Model::Base? = nil, title : String? = nil, content : String? = nil, sent_at : Time? = Time.local, read_at : Time? = nil)
   core_attributes = {
     type: type,
     player_id: player.id,

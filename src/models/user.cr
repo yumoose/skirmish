@@ -18,8 +18,8 @@ class User < Jennifer::Model::Base
     reset_digest: String?,
     reset_sent_at: Time?,
 
-    created_at: { type: Time, default: Time.now },
-    updated_at: { type: Time, default: Time.now }
+    created_at: { type: Time, default: Time.local },
+    updated_at: { type: Time, default: Time.local }
   )
 
   scope :unverified { where { _activated_at == nil } }
@@ -36,7 +36,7 @@ class User < Jennifer::Model::Base
   validates_format :verification_code, /^[0-9a-z]{16}$/
 
   def activate!
-    update!(activated_at: Time.now) unless activated?
+    update!(activated_at: Time.local) unless activated?
   end
 
   def activated?
@@ -81,7 +81,7 @@ class User < Jennifer::Model::Base
   end
 
   def authenticate(password : String)
-    (bcrypt_pass = self.password) ? bcrypt_pass == password : false
+    (bcrypt_pass = self.password) ? bcrypt_pass.verify(password) : false
   end
 
   private getter new_password : String?

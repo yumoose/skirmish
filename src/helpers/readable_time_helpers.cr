@@ -2,7 +2,7 @@ module ReadableTimeHelpers
   def time_units_since(time : Time | Nil)
     return "-" if time.nil?
 
-    span = Time.now - time
+    span = Time.local - time
 
     if span.total_weeks.to_i > 0
       if span.total_weeks.to_i == 1

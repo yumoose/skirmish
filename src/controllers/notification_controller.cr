@@ -48,7 +48,7 @@ class NotificationController < ApplicationController
     player = current_player.not_nil!
 
     notifications = Notification.where { _player_id == player.id }.where { _read_at == nil }
-    notifications.update(read_at: Time.now)
+    notifications.update(read_at: Time.local)
 
     redirect_to "/notifications"
   end

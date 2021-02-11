@@ -25,7 +25,7 @@ class GoogleAuth
   end
 
   def get(resource, @auth_code : String)
-    access_token = @oauth_client.get_access_token_using_authorization_code(@auth_code)
+    access_token = @oauth_client.get_access_token_using_authorization_code(@auth_code.not_nil!)
 
     client = HTTP::Client.new("www.googleapis.com", tls: true)
     access_token.authenticate(client)

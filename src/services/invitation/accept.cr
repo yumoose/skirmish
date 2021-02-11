@@ -13,8 +13,8 @@ class Invitation::Accept
     assert_invite_not_already_accepted!
     assert_player_not_already_in_league!
 
-    Jennifer::Adapter.adapter.transaction do
-      invitation.update!(accepted_at: Time.now)
+    Jennifer::Adapter.default_adapter.transaction do
+      invitation.update!(accepted_at: Time.local)
       Membership.create!(league_id: invitation.league_id, player_id: invitation.player_id)
       read_invite_request_notification!
     end

@@ -51,7 +51,7 @@ describe Notification do
     context "when the notification has a date of reading" do
       it "is true" do
         notification = create_notification(player: Player.all.first!)
-        notification.read_at = Time.now
+        notification.read_at = Time.local
 
         notification.read?.should be_true
       end
@@ -72,7 +72,7 @@ describe Notification do
     context "when the notification has already been read" do
       it "keeps the notification's original read time untouched" do
         notification = create_notification(player: Player.all.first!)
-        original_read_time = Time.now
+        original_read_time = Time.local
         notification.read_at = original_read_time
 
         notification.read!

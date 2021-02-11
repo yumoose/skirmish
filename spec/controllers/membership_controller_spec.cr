@@ -1,40 +1,22 @@
 require "./spec_helper"
 
-class MembershipControllerTest < GarnetSpec::Controller::Test
-  getter handler : Amber::Pipe::Pipeline
+include GarnetSpec::RequestHelper
 
-  def initialize
-    @handler = Amber::Pipe::Pipeline.new
-
-    @handler.build :web do
-      plug Amber::Pipe::Error.new
-      plug Amber::Pipe::Session.new
-      plug Amber::Pipe::Flash.new
-      plug FakeId.new
-      plug Authenticate.new
-    end
-
-    @handler.prepare_pipelines
-  end
-end
-
-describe MembershipControllerTest do
-  subject = MembershipControllerTest.new
-
+describe MembershipController do
   describe "#create" do
     context "when logged in as a player" do
       it "creates a membership" do
         league = create_league
         memberships_before = Membership.all.count
 
-        subject.post "/leagues/#{league.id}/join", headers: basic_authenticated_headers
+        post "/leagues/#{league.id}/join", headers: basic_authenticated_headers
 
         Membership.all.count.should eq memberships_before + 1
       end
 
       it "redirects back to the league" do
         league = create_league
-        response = subject.post "/leagues/#{league.id}/join", headers: basic_authenticated_headers
+        response = post "/leagues/#{league.id}/join", headers: basic_authenticated_headers
 
         response.status_code.should eq(302)
         response.headers["Location"].should eq "/leagues/#{league.id}"
@@ -45,14 +27,14 @@ describe MembershipControllerTest do
           league = create_league
           player = create_player_with_mock_user
 
-          subject.post "/leagues/#{league.id}/join", headers: authenticated_headers_for(player)
+          post "/leagues/#{league.id}/join", headers: authenticated_headers_for(player)
 
           Membership.all.last!.player.should eq player
         end
 
         it "is active" do
           league = create_league
-          subject.post "/leagues/#{league.id}/join", headers: basic_authenticated_headers
+          post "/leagues/#{league.id}/join", headers: basic_authenticated_headers
 
           Membership.all.last!.active?.should be_true
         end
@@ -63,10 +45,10 @@ describe MembershipControllerTest do
       it "doesn't create another membership" do
         league = create_league
         player = create_player_with_mock_user
-        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now)
+        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local)
         memberships_before = Membership.all.count
 
-        subject.post "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
+        post "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
 
         Membership.all.count.should eq memberships_before
       end
@@ -74,9 +56,9 @@ describe MembershipControllerTest do
       it "redirects back to the league" do
         league = create_league
         player = create_player_with_mock_user
-        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now)
+        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local)
 
-        response = subject.post "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
+        response = post "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
 
         response.status_code.should eq(302)
         response.headers["Location"].should eq "/leagues/#{league.id}"
@@ -88,14 +70,14 @@ describe MembershipControllerTest do
         league = create_league
         memberships_before = Membership.all.count
 
-        response = subject.post "/leagues/#{league.id}/join"
+        response = post "/leagues/#{league.id}/join"
 
         Membership.all.count.should eq memberships_before
       end
 
       it "redirects to the login page" do
         league = create_league
-        response = subject.post "/leagues/#{league.id}/join"
+        response = post "/leagues/#{league.id}/join"
 
         response.status_code.should eq(302)
         response.headers["Location"].should match(/\/signin/)
@@ -108,9 +90,9 @@ describe MembershipControllerTest do
       it "deactivates the membership" do
         league = create_league
         player = create_player_with_mock_user
-        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now)
+        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local)
 
-        subject.patch "/leagues/#{league.id}/leave", headers: authenticated_headers_for(player.user.not_nil!)
+        patch "/leagues/#{league.id}/leave", headers: authenticated_headers_for(player.user.not_nil!)
 
         membership = Membership.find!(membership.id)
         membership.active?.should be_false
@@ -119,10 +101,10 @@ describe MembershipControllerTest do
       it "doesn't destroy any memberships" do
         league = create_league
         player = create_player_with_mock_user
-        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now)
+        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local)
 
         memberships_before = Membership.all.count
-        subject.patch "/leagues/#{league.id}/leave", headers: authenticated_headers_for(player.user.not_nil!)
+        patch "/leagues/#{league.id}/leave", headers: authenticated_headers_for(player.user.not_nil!)
 
         Membership.all.count.should eq memberships_before
       end
@@ -130,9 +112,9 @@ describe MembershipControllerTest do
       it "redirects back to the league" do
         league = create_league
         player = create_player_with_mock_user
-        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now)
+        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local)
 
-        response = subject.patch "/leagues/#{league.id}/leave", headers: authenticated_headers_for(player.user.not_nil!)
+        response = patch "/leagues/#{league.id}/leave", headers: authenticated_headers_for(player.user.not_nil!)
 
         response.status_code.should eq(302)
         response.headers["Location"].should eq "/leagues/#{league.id}"
@@ -142,9 +124,9 @@ describe MembershipControllerTest do
         it "doesn't deactivate the membership" do
           league = create_league
           player = create_player_with_mock_user
-          membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now)
+          membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local)
 
-          response = subject.patch "/leagues/#{league.id}/leave"
+          response = patch "/leagues/#{league.id}/leave"
 
           membership = Membership.find!(membership.id)
           membership.active?.should be_true
@@ -153,9 +135,9 @@ describe MembershipControllerTest do
         it "redirects to the login page" do
           league = create_league
           player = create_player_with_mock_user
-          membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now)
+          membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local)
 
-          response = subject.patch "/leagues/#{league.id}/leave"
+          response = patch "/leagues/#{league.id}/leave"
 
           response.status_code.should eq(302)
           response.headers["Location"].should match(/\/signin/)
@@ -167,9 +149,9 @@ describe MembershipControllerTest do
       it "re-activates the membership" do
         league = create_league
         player = create_player_with_mock_user
-        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now, left_at: Time.now)
+        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local, left_at: Time.local)
 
-        subject.patch "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
+        patch "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
 
         membership = Membership.find!(membership.id)
         membership.active?.should be_true
@@ -178,10 +160,10 @@ describe MembershipControllerTest do
       it "doesn't create another membership" do
         league = create_league
         player = create_player_with_mock_user
-        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now, left_at: Time.now)
+        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local, left_at: Time.local)
 
         memberships_before = Membership.all.count
-        subject.patch "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
+        patch "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
 
         Membership.all.count.should eq memberships_before
       end
@@ -189,9 +171,9 @@ describe MembershipControllerTest do
       it "redirects back to the league" do
         league = create_league
         player = create_player_with_mock_user
-        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now, left_at: Time.now)
+        membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local, left_at: Time.local)
 
-        response = subject.patch "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
+        response = patch "/leagues/#{league.id}/join", headers: authenticated_headers_for(player.user.not_nil!)
 
         response.status_code.should eq(302)
         response.headers["Location"].should eq "/leagues/#{league.id}"
@@ -201,9 +183,9 @@ describe MembershipControllerTest do
         it "doesn't re-activate the membership" do
           league = create_league
           player = create_player_with_mock_user
-          membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now, left_at: Time.now)
+          membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local, left_at: Time.local)
 
-          response = subject.patch "/leagues/#{league.id}/join"
+          response = patch "/leagues/#{league.id}/join"
 
           membership = Membership.find!(membership.id)
           membership.active?.should be_false
@@ -212,9 +194,9 @@ describe MembershipControllerTest do
         it "redirects to the login page" do
           league = create_league
           player = create_player_with_mock_user
-          membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.now, left_at: Time.now)
+          membership = Membership.create!(league_id: league.id, player_id: player.id, joined_at: Time.local, left_at: Time.local)
 
-          response = subject.patch "/leagues/#{league.id}/join"
+          response = patch "/leagues/#{league.id}/join"
 
           response.status_code.should eq(302)
           response.headers["Location"].should match(/\/signin/)

@@ -13,7 +13,7 @@ describe Game::CanBeConfirmedByPlayer do
   loser = create_player_with_mock_user
 
   [winner, loser].each do |player|
-    Membership.create!(player_id: player.id, league_id: league.id, joined_at: Time.now)
+    Membership.create!(player_id: player.id, league_id: league.id, joined_at: Time.local)
   end
 
   describe "#call" do

@@ -11,7 +11,7 @@ class PasswordReset::Init < BaseService
     token = GenerateSecureToken.call
 
     @user.reset_digest = token[:digest]
-    @user.reset_sent_at = Time.new
+    @user.reset_sent_at = Time.local
     @user.save!
 
     PasswordResetMailer.new(@user, token[:plain]).send

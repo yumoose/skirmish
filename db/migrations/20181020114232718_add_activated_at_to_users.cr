@@ -1,7 +1,7 @@
 class AddActivatedAtToUsers < Jennifer::Migration::Base
   def up
     change_table(:users) do |t|
-      t.add_column(:activated_at, :timestamp, { default: nil })
+      t.add_column(:activated_at, :timestamp, { :default => nil })
     end
 
     exec("UPDATE users SET activated_at = users.created_at;")

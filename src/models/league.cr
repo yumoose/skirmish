@@ -32,8 +32,8 @@ class League < Jennifer::Model::Base
     start_rating: { type: Int32, default: DEFAULT_START_RATING },
     k_factor: { type: Float64, default: DEFAULT_K_FACTOR },
 
-    created_at: { type: Time, default: Time.now },
-    updated_at: { type: Time, default: Time.now }
+    created_at: { type: Time, default: Time.local },
+    updated_at: { type: Time, default: Time.local }
   )
 
   has_many :games, Game

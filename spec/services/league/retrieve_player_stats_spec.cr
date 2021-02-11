@@ -37,7 +37,7 @@ describe League::RetrievePlayerStats do
         end
 
         it "has a current rating" do
-          fetch_stats.call[:ratings][time_formatter.format(Time.now)].should eq league.start_rating
+          fetch_stats.call[:ratings][time_formatter.format(Time.local)].should eq league.start_rating
         end
       end
 
@@ -59,7 +59,7 @@ describe League::RetrievePlayerStats do
           end
 
           it "has a current rating" do
-            fetch_stats.call[:ratings][time_formatter.format(Time.now)].should eq league.start_rating
+            fetch_stats.call[:ratings][time_formatter.format(Time.local)].should eq league.start_rating
           end
         end
 
@@ -77,7 +77,7 @@ describe League::RetrievePlayerStats do
         end
 
         it "has a current rating" do
-          fetch_stats.call[:ratings][time_formatter.format(Time.now)].should eq latest_player_rating
+          fetch_stats.call[:ratings][time_formatter.format(Time.local)].should eq latest_player_rating
         end
 
         it "has a rating for the confirmed game" do

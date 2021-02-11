@@ -1,5 +1,7 @@
 require "./spec_helper"
 
+include GarnetSpec::RequestHelper
+
 # Controller Unit Test
 describe ErrorController do
   request = HTTP::Request.new("get", "/")
@@ -30,27 +32,9 @@ describe ErrorController do
   end
 end
 
-# Controller Integration Test
-class ErrorControllerTest < GarnetSpec::Controller::Test
-  getter handler : Amber::Pipe::Pipeline
-
-  def initialize
-    @handler = Amber::Pipe::Pipeline.new
-    @handler.build :web do
-      plug Amber::Pipe::Error.new
-    end
-    @handler.build :static do
-      plug Amber::Pipe::Error.new
-    end
-    @handler.prepare_pipelines
-  end
-end
-
-describe ErrorControllerTest do
-  subject = ErrorControllerTest.new
-
+describe ErrorController do
   it "renders a 404 error page" do
-    response = subject.get "/non-existent-route" # If this route exists, the test must be changed
+    response = get "/non-existent-route" # If this route exists, the test must be changed
 
     response.status_code.should eq 404
     response.body.should contain "Page not found"

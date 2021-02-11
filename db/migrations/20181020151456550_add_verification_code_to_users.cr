@@ -1,7 +1,7 @@
 class AddVerificationCodeToUsers < Jennifer::Migration::Base
   def up
     change_table(:users) do |t|
-      t.add_column(:verification_code, :string, { size: 16 })
+      t.add_column(:verification_code, :string, { :size => 16 })
     end
 
     exec(

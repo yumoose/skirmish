@@ -14,13 +14,13 @@ class Invitation::Create
     assert_invite_not_already_created!
     assert_approver_is_an_admin!
 
-    Jennifer::Adapter.adapter.transaction do
+    Jennifer::Adapter.default_adapter.transaction do
       Invitation.create!(
         league_id: league.id,
         player_id: player.id,
         approver_id: approver.try(&.id),
-        approved_at: player_request? ? nil : Time.now,
-        accepted_at: player_request? ? Time.now : nil
+        approved_at: player_request? ? nil : Time.local,
+        accepted_at: player_request? ? Time.local : nil
       ).tap do |invite|
         notify_recipient!(invite)
       end
@@ -62,7 +62,7 @@ class Invitation::Create
           player_id: admin_player.id,
           title: "Invite request for #{league.name}",
           content: "#{player.display_name} has requested to join #{league.name}",
-          sent_at: Time.now,
+          sent_at: Time.local,
           source_type: invite.class.to_s,
           source_id: invite.id
         )
@@ -72,7 +72,7 @@ class Invitation::Create
         player_id: player.id,
         title: "You've been invited to join #{league.name}",
         content: "#{approver.not_nil!.display_name} has invited you to join #{league.name}",
-        sent_at: Time.now,
+        sent_at: Time.local,
         source_type: invite.class.to_s,
         source_id: invite.id
       )

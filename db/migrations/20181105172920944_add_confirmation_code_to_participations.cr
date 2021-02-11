@@ -1,7 +1,7 @@
 class AddConfirmationCodeToParticipations < Jennifer::Migration::Base
   def up
     change_table(:participations) do |t|
-      t.add_column(:confirmation_code, :string, { size: 16 })
+      t.add_column(:confirmation_code, :string, { :size => 16 })
     end
 
     exec(

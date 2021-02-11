@@ -7,7 +7,7 @@ class UserController < ApplicationController
     player = Player.where { _tag == params[:player_tag]? }.first || current_player.not_nil!
     user = player.user!
 
-    own_profile? = player.id == current_player.not_nil!.id
+    is_own_profile = player.id == current_player.not_nil!.id
 
     # TODO: add leagues they have been invited to?
     viewers_leagues = current_player.not_nil!.leagues.not_nil!.map(&.id) || [] of Int64
@@ -33,7 +33,7 @@ class UserController < ApplicationController
     auth_providers = AuthProvider.where { _user_id == user.id }
 
     begin
-      Jennifer::Adapter.adapter.transaction do
+      Jennifer::Adapter.default_adapter.transaction do
         update!(user, player)
 
         flash[:success] = "Updated Profile successfully"

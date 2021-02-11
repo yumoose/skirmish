@@ -44,7 +44,7 @@ abstract class ApplicationView < ViewModel::Base
   end
 
   private def bundle_request_version
-    Time.now.to_s(I18n.translate("formats.time.iso_date_hour"))
+    Time.local.to_s(I18n.translate("formats.time.iso_date_hour"))
   end
 
   private def auth_page?

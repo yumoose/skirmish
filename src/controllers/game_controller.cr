@@ -178,7 +178,7 @@ class GameController < ApplicationController
       league = game.league!
 
       if game.unconfirmed?
-        Jennifer::Adapter.adapter.transaction do
+        Jennifer::Adapter.default_adapter.transaction do
           game.participations.each { |participation| participation.destroy }
           Notification.where { (_source_type == "Game") & (_source_id == game.id) }.destroy
 

@@ -15,7 +15,7 @@ class RegistrationController < ApplicationController
   end
 
   def create
-    Jennifer::Adapter.adapter.transaction do
+    Jennifer::Adapter.default_adapter.transaction do
       user = create_user_from_params
       player = create_player_from_params(user)
 
@@ -26,7 +26,7 @@ class RegistrationController < ApplicationController
           user_id: user.id
         )
 
-        user.update!(activated_at: Time.now)
+        user.update!(activated_at: Time.local)
         session.delete("auth_provider_details")
 
         session[:user_id] = user.id

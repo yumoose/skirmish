@@ -151,7 +151,7 @@ describe User do
 
     context "when the user has been activated" do
       it "is true" do
-        user.update!(activated_at: Time.now)
+        user.update!(activated_at: Time.local)
 
         user.activated?.should be_true
       end
@@ -169,7 +169,7 @@ describe User do
 
     context "when the user has been activated" do
       it "is false" do
-        user.update!(activated_at: Time.now)
+        user.update!(activated_at: Time.local)
 
         user.unverified?.should be_false
       end

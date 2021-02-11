@@ -1,7 +1,7 @@
 .row
   h2.col.justify-content-between.btn-toolbar
     span.heading-text Profile
-    - if own_profile?
+    - if is_own_profile
       .button-group
         == link_to(t("profile.actions.edit"), "/profile/edit", class: "btn btn-primary")
         == link_to(t("authentication.sign_out"), "/signout", class: "btn btn-dark")
@@ -11,7 +11,7 @@
   h3.tag = player.tag
   h3.name = user.name
 
-- if own_profile?
+- if is_own_profile
   h3 Unconfirmed Games
   .unconfirmed_games.tiles
     - player.unconfirmed_games.each do |game|

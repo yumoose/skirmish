@@ -1,8 +1,8 @@
 require "../config/application.cr"
 # Automatically load schema and run migrations on the test database
 
-Jennifer::Adapter.adapter.transaction do
-  if Amber.env.development?
+if Amber.env.development?
+  Jennifer::Adapter.default_adapter.transaction do
     default_password_digest = Crypto::Bcrypt::Password.create("password", cost: 10).to_s
 
     alice_user = User.create(
@@ -10,7 +10,7 @@ Jennifer::Adapter.adapter.transaction do
       email: "alice@skirmish.online",
       receive_email_notifications: false,
       verification_code: Random::Secure.hex(8),
-      activated_at: Time.now,
+      activated_at: Time.local,
       password_digest: default_password_digest
     )
     alice = Player.create!(
@@ -23,7 +23,7 @@ Jennifer::Adapter.adapter.transaction do
       email: "bob@skirmish.online",
       receive_email_notifications: false,
       verification_code: Random::Secure.hex(8),
-      activated_at: Time.now,
+      activated_at: Time.local,
       password_digest: default_password_digest
     )
     bob = Player.create!(
@@ -36,7 +36,7 @@ Jennifer::Adapter.adapter.transaction do
       email: "charlie@skirmish.online",
       receive_email_notifications: false,
       verification_code: Random::Secure.hex(8),
-      activated_at: Time.now,
+      activated_at: Time.local,
       password_digest: default_password_digest
     )
     charlie = Player.create!(
@@ -49,7 +49,7 @@ Jennifer::Adapter.adapter.transaction do
       email: "danielle@skirmish.online",
       receive_email_notifications: false,
       verification_code: Random::Secure.hex(8),
-      activated_at: Time.now,
+      activated_at: Time.local,
       password_digest: default_password_digest
     )
     danielle = Player.create!(
@@ -62,7 +62,7 @@ Jennifer::Adapter.adapter.transaction do
       email: "erik@skirmish.online",
       receive_email_notifications: false,
       verification_code: Random::Secure.hex(8),
-      activated_at: Time.now,
+      activated_at: Time.local,
       password_digest: default_password_digest
     )
     erik = Player.create!(
@@ -87,7 +87,7 @@ Jennifer::Adapter.adapter.transaction do
       Membership.create!(
         player_id: player.id,
         league_id: hotdog_league.id,
-        joined_at: Time.now
+        joined_at: Time.local
       )
     end
 

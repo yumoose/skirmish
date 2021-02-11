@@ -1,7 +1,7 @@
 class AddNameToUsers < Jennifer::Migration::Base
   def up
     change_table(:users) do |t|
-      t.add_column(:name, :string, { size: 128 })
+      t.add_column(:name, :string, { :size => 128 })
     end
 
     exec("

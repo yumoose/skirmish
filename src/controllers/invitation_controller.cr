@@ -8,7 +8,7 @@ class InvitationController < ApplicationController
     if league = League.find(params[:league_id])
       if current_player.not_nil!.admin_of?(league)
         if player = Player.find(params[:player_id])
-          Jennifer::Adapter.adapter.transaction do
+          Jennifer::Adapter.default_adapter.transaction do
             Invitation::Create.new(
               league: league,
               player: player,
@@ -41,7 +41,7 @@ class InvitationController < ApplicationController
       player = current_player.not_nil!
 
       if invite.player_id == player.id
-        Jennifer::Adapter.adapter.transaction do
+        Jennifer::Adapter.default_adapter.transaction do
           Invitation::Accept.new(
             invitation: invite,
             player: player
@@ -68,7 +68,7 @@ class InvitationController < ApplicationController
       player = current_player.not_nil!
 
       if player.admin_of?(invite.league!)
-        Jennifer::Adapter.adapter.transaction do
+        Jennifer::Adapter.default_adapter.transaction do
           invite.destroy
 
           flash["success"] = "Invite deleted"

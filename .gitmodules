@@ -1,0 +1,4 @@
+[submodule "mailer"]
+  active = true
+  path = crystal_libraries/mailer
+  url = https://github.com/yumoose/mailer.git

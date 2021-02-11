@@ -1,7 +1,7 @@
 class AddVisibilityToLeagues < Jennifer::Migration::Base
   def up
     change_table(:leagues) do |t|
-      t.add_column(:visibility, :string, { size: 32 })
+      t.add_column(:visibility, :string, { :size => 32 })
     end
 
     exec("

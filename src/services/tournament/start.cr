@@ -18,7 +18,7 @@ class Tournament::Start
       raise StartError.new("Not enough players entered to start the tournament")
     end
 
-    Jennifer::Adapter.adapter.transaction do
+    Jennifer::Adapter.default_adapter.transaction do
       players = PreparePlayers.new(tournament: tournament).call
       initial_matches = CreateMatches.new(tournament: tournament, players: players).call
       ProcessByes.new(matches: initial_matches).call
